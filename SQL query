@@ -1,0 +1,16 @@
+SELECT
+    users.id AS user_id,
+    COALESCE(users.country, 'unknown') AS country,
+    COALESCE(users.gender, 'unknown') AS gender,
+    groups.device AS device_type,
+    groups.group AS test_group,
+    CASE WHEN activity.spent > 0 THEN 'Yes' ELSE 'No' END AS converted,
+    ROUND(SUM(activity.spent), 4) AS total_spent
+FROM
+    users
+JOIN
+    activity ON users.id = activity.uid
+JOIN
+    groups ON users.id = groups.uid
+GROUP BY
+    users.id, country, gender, groups.device, groups.group, CASE WHEN activity.spent > 0 THEN 'Yes' ELSE 'No' END;
